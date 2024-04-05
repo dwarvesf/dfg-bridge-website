@@ -9,19 +9,36 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@layerzerolabs/lz-v2-utilities": "^2.1.27",
+    "@mochi-ui/core": "^0.13.5",
+    "@mochi-ui/theme": "^0.18.0",
+    "@rainbow-me/rainbowkit": "^2.0.4",
+    "@tanstack/react-query": "^5.28.9",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.364.0",
+    "next": "14.1.4",
+    "numeral": "^2.0.6",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.1.4"
+    "react-hook-form": "^7.51.2",
+    "react-hot-toast": "^2.4.1",
+    "react-spinners": "^0.13.8",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "^2.9.6",
+    "wagmi": "^2.5.16",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
+    "@types/numeral": "^2.0.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.4",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.4"
+    "typescript": "^5"
   }
 }
