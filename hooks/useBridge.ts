@@ -1,11 +1,10 @@
 import { parseEther, zeroAddress } from "viem";
 import {
-  useAccount,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { abi as ethDfgBridgeAbi } from "../contract/abi/EthBridge.json";
+import ethDfgBridgeContract from "../contract/abi/EthBridge.json";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Options } from "@layerzerolabs/lz-v2-utilities";
@@ -45,7 +44,7 @@ export function useBridge(
   // eth sepolia la 40161
   let { data: gasData } = useReadContract({
     address: bridgeContractAddress as `0x${string}`,
-    abi: ethDfgBridgeAbi,
+    abi: ethDfgBridgeContract?.abi,
     functionName: "quote",
     args: [dstEid, receiver, value, BigInt(0), options, false],
   });
@@ -74,7 +73,7 @@ export function useBridge(
 
       await writeContractAsync({
         address: bridgeContractAddress as `0x${string}`,
-        abi: ethDfgBridgeAbi,
+        abi: ethDfgBridgeContract?.abi,
         functionName: "bridgeToken",
         args: [dstEid, receiver, value, BigInt(0), options],
         value: parseEther(gasInEther.toString()),

@@ -104,14 +104,14 @@ export default function Form() {
     tokenDFG,
     bridgeContractAddress,
     address,
-    convertNumberToBigInt(Number(watchFields[3]))
+    convertNumberToBigInt(Number(watchFields[3] ?? 0))
   );
 
   const fromChainInfo = chains?.find((c) => c.id === getValues().fromChain);
   const toChainInfo = chains?.find((c) => c.id === getValues().toChain);
 
   const bridgeAmount = convertNumberToBigInt(
-    Number(watchFields[3]),
+    Number(watchFields[3] ?? 0),
     currentChainId === baseSepolia.id ? 18 : 0
   );
 
