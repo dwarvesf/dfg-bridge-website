@@ -26,7 +26,7 @@ import { ScaleLoader } from "react-spinners";
 import { useBridge } from "@/hooks/useBridge";
 import { isDirty } from "zod";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Contract, ContractFactory } from "ethers";
+import toast from "react-hot-toast";
 
 type FormFieldValues = {
   fromChain: number;
@@ -42,6 +42,7 @@ export default function Form() {
   const { address } = useAccount();
 
   const currentChainId = getChainId(config);
+
   const tokenDFG = useMemo(
     () =>
       currentChainId === baseSepolia.id
@@ -61,25 +62,24 @@ export default function Form() {
     [currentChainId]
   );
 
-  const { data } = useBalance({
+  const { data, refetch } = useBalance({
     token: tokenDFG as `0x${string}`,
     address,
   });
+
   const formatted = formatUnits(data?.value ?? BigInt(0), data?.decimals ?? 0);
 
   const { chains, switchChain } = useSwitchChain();
 
-  const {
-    control,
-    setValue,
-    formState,
-    reset,
-    getValues,
-    watch,
-    handleSubmit,
-  } = useForm<FormFieldValues>();
+  const { control, setValue, reset, getValues, watch, handleSubmit } =
+    useForm<FormFieldValues>();
 
-  const watchFields = watch(["hasOther", "fromAddress"]);
+  const watchFields = watch([
+    "hasOther",
+    "fromAddress",
+    "toAddress",
+    "fromAmount",
+  ]);
 
   useEffect(() => {
     let defaultValues = {
@@ -104,29 +104,61 @@ export default function Form() {
     tokenDFG,
     bridgeContractAddress,
     address,
-    convertNumberToBigInt(getValues().fromAmount)
+    convertNumberToBigInt(Number(watchFields[3]))
   );
 
   const fromChainInfo = chains?.find((c) => c.id === getValues().fromChain);
   const toChainInfo = chains?.find((c) => c.id === getValues().toChain);
 
-  const { bridge, isBridging, confirmingBridge, isBridgeTxSuccess } = useBridge(
-    bridgeContractAddress,
-    address,
-    convertNumberToBigInt(getValues().fromAmount),
-    isApproved
+  const bridgeAmount = convertNumberToBigInt(
+    Number(watchFields[3]),
+    currentChainId === baseSepolia.id ? 18 : 0
   );
+
+  const receiver = useMemo(
+    () => (getValues().hasOther ? watchFields[2] : watchFields[1]),
+    [getValues, watchFields]
+  );
+
+  const { bridge, isBridging, confirmingBridge, isBridgeTxSuccess, hash } =
+    useBridge(
+      bridgeContractAddress,
+      receiver as `0x${string}`,
+      bridgeAmount,
+      isApproved,
+      refetch
+    );
 
   const loading =
     confirmingApprove || isApproving || isBridging || confirmingBridge;
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log(JSON.stringify(data));
-    !isApproved ? approve() : bridge();
+    try {
+      if (!isApproved) {
+        await approve();
+      } else {
+        await bridge();
+
+        reset({
+          ...getValues(),
+          fromAmount: "",
+          toAmount: "",
+          hasOther: false,
+        });
+      }
+    } catch (error) {
+      console.log("error", error);
+      toast.error("Something error!");
+    }
   };
 
   return (
-    <form className="space-y-6 max-w-lg" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      autoComplete="off"
+      className="space-y-6 max-w-lg"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Card>
         <div className="grid gap-4 grid-cols-1">
           <div className="flex items-center justify-between">
@@ -150,11 +182,6 @@ export default function Form() {
           <Controller
             name="fromAddress"
             control={control}
-            rules={
-              {
-                // required: "This field is required",
-              }
-            }
             render={({ field, fieldState }) => (
               <FormControl error={!!fieldState.error} hideHelperTextOnError>
                 <TextFieldRoot>
@@ -178,21 +205,12 @@ export default function Form() {
               render={({ field, fieldState }) => (
                 <FormControl error={!!fieldState.error} hideHelperTextOnError>
                   <FormLabel>
-                    <div className="flex items-center">
+                    <div className="flex items-center text-base">
                       <Bitcoin className="w-4 h-4" />
                       {fromChainInfo?.name}
                     </div>
                   </FormLabel>
-                  <TextFieldRoot className="">
-                    <TextFieldDecorator>
-                      <div className="flex items-center">
-                        (<DollarSign className="w-4 h-4" />
-                        {field?.value
-                          ? formatNum((parseInt(field?.value) * 1.5).toString())
-                          : 0}
-                        )
-                      </div>
-                    </TextFieldDecorator>
+                  <TextFieldRoot>
                     <TextFieldInput
                       {...field}
                       onChange={(e) => {
@@ -201,7 +219,7 @@ export default function Form() {
                         setValue("toAmount", e.target.value);
                       }}
                       placeholder="0"
-                      className="text-right pl-11"
+                      className="text-right"
                     />
                     <TextFieldDecorator>
                       <div className="flex items-center">
@@ -211,6 +229,13 @@ export default function Form() {
                       </div>
                     </TextFieldDecorator>
                   </TextFieldRoot>
+                  <div className=" flex items-center justify-end text-xs">
+                    (<DollarSign className="w-3 h-3" />
+                    {field?.value
+                      ? (parseFloat(field?.value) * 1.5).toFixed(2)
+                      : 0}
+                    )
+                  </div>
                   <FormErrorMessage>
                     {fieldState.error?.message}
                   </FormErrorMessage>
@@ -221,6 +246,7 @@ export default function Form() {
 
           <div className="flex w-full justify-center items-center">
             <ArrowUpDown
+              name="switch-chain-button"
               className="hover:bg-slate-300 w-6 h-6 rounded-lg bg-slate-50 cursor-pointer"
               onClick={() => {
                 const toChain = chains?.filter((c) => c.id !== currentChainId);
@@ -238,7 +264,7 @@ export default function Form() {
               render={({ field }) => (
                 <>
                   {" "}
-                  <div className="flex items-center">
+                  <div className="flex items-center mb-3">
                     To:
                     <p
                       className={cn("mx-2", {
@@ -266,7 +292,7 @@ export default function Form() {
                         })}
                         htmlFor="switch"
                       >
-                        Other address
+                        Other
                       </label>
                     </div>
                   </div>
@@ -276,11 +302,6 @@ export default function Form() {
             <Controller
               name="toAddress"
               control={control}
-              rules={
-                {
-                  // required: "This field is required",
-                }
-              }
               render={({ field, fieldState }) => (
                 <FormControl error={!!fieldState.error} hideHelperTextOnError>
                   <TextFieldRoot className="">
@@ -297,41 +318,37 @@ export default function Form() {
               )}
             />
           </Card>
+
           <Card>
             <Controller
               name="toAmount"
               control={control}
-              rules={{
-                required: "This field is required",
-              }}
               render={({ field, fieldState }) => (
                 <FormControl error={!!fieldState.error} hideHelperTextOnError>
                   <FormLabel>
-                    <div className="flex items-center">
+                    <div className="flex items-center text-base">
                       <Bitcoin className="w-4 h-4" />
                       {toChainInfo?.name}
                     </div>
                   </FormLabel>
                   <TextFieldRoot className="">
-                    <TextFieldDecorator>
-                      <div className="flex items-center">
-                        (<DollarSign className="w-4 h-4" />
-                        {field?.value
-                          ? formatNum((parseInt(field?.value) * 1.5).toString())
-                          : 0}
-                        )
-                      </div>
-                    </TextFieldDecorator>
                     <TextFieldInput
                       disabled
                       {...field}
                       placeholder="0"
-                      className="text-right pl-11"
+                      className="text-right"
                     />
                     <TextFieldDecorator>
                       <div className="flex items-center">{data?.symbol}</div>
                     </TextFieldDecorator>
                   </TextFieldRoot>
+                  <div className=" flex items-center justify-end text-xs">
+                    (<DollarSign className="w-3 h-3" />
+                    {field?.value
+                      ? (parseFloat(field?.value) * 1.5).toFixed(2)
+                      : 0}
+                    )
+                  </div>
                   <FormErrorMessage>
                     {fieldState.error?.message}
                   </FormErrorMessage>
@@ -341,22 +358,34 @@ export default function Form() {
           </Card>
         </div>
 
-        <div className="flex items-center justify-between">
-          <Typography>Fees: 123123 ETH</Typography>
-        </div>
-
-        <div className="w-full flex justify-center">
+        <div className="mt-4 w-full flex justify-center">
           {!address ? (
             <ConnectButton />
           ) : isApproved ? (
-            <Button
-              type="submit"
-              disabled={!isDirty}
-              loading={loading}
-              loadingIndicator={<ScaleLoader height={9} color="#36d7b7" />}
-            >
-              Bridge
-            </Button>
+            <div className="flex flex-col w-full">
+              <Button
+                type="submit"
+                disabled={!isDirty}
+                loading={loading}
+                loadingIndicator={<ScaleLoader height={9} color="#36d7b7" />}
+              >
+                Bridge
+              </Button>
+
+              {hash && (
+                <div className="mt-3 w-full flex items-end">
+                  <p className="mr-2">Your latest tx:</p>
+                  <a
+                    href={`${fromChainInfo?.blockExplorers?.default?.url}/tx/${hash}`}
+                    className="mt-4 group rounded-lg border border-transparent transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {hash?.substring(0, 10)}
+                  </a>
+                </div>
+              )}
+            </div>
           ) : (
             <Button
               type="submit"

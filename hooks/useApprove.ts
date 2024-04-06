@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { erc20Abi, zeroAddress } from "viem";
 import {
   useReadContract,
@@ -20,8 +22,9 @@ export function useApprove(
 
   const {
     data,
-    writeContract,
+    writeContractAsync,
     isPending: confirmingApprove,
+    reset,
   } = useWriteContract();
 
   const { isLoading: isApproving, isSuccess } = useWaitForTransactionReceipt({
@@ -32,13 +35,25 @@ export function useApprove(
   const isApproved =
     (allowance !== BigInt(0) && isWithinAllowanceCap) || isSuccess;
 
-  const approve = () =>
-    writeContract({
+  const approve = async () => {
+    toast("Approving...please confirm on your wallet!");
+
+    await writeContractAsync({
       address: token,
       abi: erc20Abi,
       functionName: "approve",
       args: [bridgeContractAddress, value],
+    }).then(() => {
+      toast.success("Waiting for your tx finalized!");
     });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Approval successful!");
+      // reset();
+    }
+  }, [isSuccess, reset]);
 
   return {
     approve,

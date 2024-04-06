@@ -22,11 +22,11 @@ export const formatNum = (num: string, dec = 4) => {
   return intPart + `${dotIdx === -1 ? "" : `.${decPart}`}`;
 };
 
-export const convertNumberToBigInt = (num: string = 0, dec: number = 18) => {
+export const convertNumberToBigInt = (num: number = 0, dec: number = 18) => {
   try {
-    return parseUnits(num?.toString(), dec).toString();
+    return parseUnits(num?.toString(), dec);
   } catch (error) {
-    return BigInt(0);
     console.log("Error when convert number to BigInt");
+    return BigInt(0);
   }
 };
