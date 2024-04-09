@@ -2,18 +2,19 @@
 
 import { cn, formatNum } from "@/utils/number";
 import {
-    Button,
-    FormControl,
-    FormErrorMessage,
-    Switch,
-    Typography,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  Switch,
+  Typography,
 } from "@mochi-ui/core";
-import { Btc, Sol } from "@mochi-ui/icons";
 import { Chain } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 import { formatUnits } from "viem";
 import { FormFieldValues } from "./bridge-form";
+import Base from "@mochi-ui/icons/web3/base";
+import Eth from "@mochi-ui/icons/web3/eth";
 
 type DataBalance = {
   decimals: number;
@@ -55,16 +56,18 @@ export const BridgeFromInput = ({
         }}
         render={({ field, fieldState }) => (
           <FormControl error={!!fieldState.error} hideHelperTextOnError>
-            <div className="flex items-center justify-between min-h-[34px]">
-              <p className="text-sm text-text-tertiary">
-                You bridge from{" "}
-                <Typography level="h7" color="primary">
-                  <div className="flex">
-                    {fromChainInfo?.name}{" "}
-                    <Sol width={22} height={22} className="ml-2" />
-                  </div>
-                </Typography>
-              </p>
+            <div className="min-h-[34px]">
+              <div className="text-sm text-text-tertiary">You bridge from </div>
+              <div className="flex justify-between items-center w-full">
+                {fromChainInfo?.name && (
+                  <Typography level="h7" color="primary">
+                    <div className="flex">
+                      {fromChainInfo?.name}{" "}
+                      <Base width={22} height={22} className="ml-2" />
+                    </div>
+                  </Typography>
+                )}
+              </div>
             </div>
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center">
@@ -117,6 +120,7 @@ export const BridgeFromInput = ({
 export const BridgeToInput = ({
   toChainInfo,
   control,
+  data,
   setValue,
   watchFields,
 }: BridgeInputProps) => {
@@ -130,12 +134,14 @@ export const BridgeToInput = ({
             <div className="min-h-[34px]">
               <div className="text-sm text-text-tertiary">To </div>
               <div className="flex justify-between items-center w-full">
-                <Typography level="h7" color="primary">
-                  <div className="flex">
-                    {toChainInfo?.name}{" "}
-                    <Btc width={22} height={22} className="ml-2" />
-                  </div>
-                </Typography>
+                {toChainInfo?.name && (
+                  <Typography level="h7" color="primary">
+                    <div className="flex">
+                      {toChainInfo?.name}{" "}
+                      <Eth width={22} height={22} className="ml-2" />
+                    </div>
+                  </Typography>
+                )}
 
                 <Controller
                   name="hasOther"
@@ -190,58 +196,6 @@ export const BridgeToInput = ({
                   )}
                 />
               </div>
-              <Controller
-                name="hasOther"
-                control={control}
-                render={({ field }) => (
-                  <>
-                    <div className="flex items-center md:hidden">
-                      {/* <Tooltip
-                          content="Bridge to other wallet address"
-                          className="max-w-xs text-center z-50"
-                          arrow="top-center"
-                        > */}
-                      <div className="flex items-center space-x-2">
-                        <label
-                          htmlFor="switch-other-wallet"
-                          className={cn({
-                            "text-[13px] text-text-tertiary": field.value,
-                            "text-[16px]": !field.value,
-                          })}
-                        >
-                          Connected Wallet
-                        </label>
-                        <Switch
-                          type="button"
-                          size="sm"
-                          id="switch-other-wallet"
-                          className="mx-2"
-                          checked={field.value}
-                          name={field.name}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setValue("hasOther", !field.value);
-                            if (field.value) {
-                              //@ts-ignore
-                              setValue("toAddress", watchFields?.[1]);
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor="switch-other-wallet"
-                          className={cn({
-                            "text-[13px] text-text-tertiary": !field.value,
-                            "text-[16px]": field.value,
-                          })}
-                        >
-                          Other Wallet
-                        </label>
-                      </div>
-                      {/* </Tooltip> */}
-                    </div>
-                  </>
-                )}
-              />
             </div>
 
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
@@ -281,7 +235,8 @@ export const BridgeToInput = ({
                   type="button"
                   className="bg-primary-soft pl-2 pr-2 text-text-primary !h-9 !rounded-lg cursor-default"
                 >
-                  <Image src="/DFG.png" alt="" width={22} height={22} /> DFG
+                  <Image src="/DFG.png" alt="" width={22} height={22} />{" "}
+                  {data?.symbol}
                 </Button>
               </div>
 
