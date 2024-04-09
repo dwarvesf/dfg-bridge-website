@@ -69,7 +69,7 @@ export const BridgeFromInput = ({
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center">
                 <input
-                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled leading-[34px] text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled leading-[34px] text-[12px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                   autoComplete="off"
                   {...field}
@@ -142,7 +142,7 @@ export const BridgeToInput = ({
                   control={control}
                   render={({ field }) => (
                     <>
-                      <div className="flex items-center">
+                      <div className="items-center hidden md:flex">
                         {/* <Tooltip
                           content="Bridge to other wallet address"
                           className="max-w-xs text-center z-50"
@@ -190,6 +190,58 @@ export const BridgeToInput = ({
                   )}
                 />
               </div>
+              <Controller
+                name="hasOther"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <div className="flex items-center md:hidden">
+                      {/* <Tooltip
+                          content="Bridge to other wallet address"
+                          className="max-w-xs text-center z-50"
+                          arrow="top-center"
+                        > */}
+                      <div className="flex items-center space-x-2">
+                        <label
+                          htmlFor="switch-other-wallet"
+                          className={cn({
+                            "text-[13px] text-text-tertiary": field.value,
+                            "text-[16px]": !field.value,
+                          })}
+                        >
+                          Connected Wallet
+                        </label>
+                        <Switch
+                          type="button"
+                          size="sm"
+                          id="switch-other-wallet"
+                          className="mx-2"
+                          checked={field.value}
+                          name={field.name}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setValue("hasOther", !field.value);
+                            if (field.value) {
+                              //@ts-ignore
+                              setValue("toAddress", watchFields?.[1]);
+                            }
+                          }}
+                        />
+                        <label
+                          htmlFor="switch-other-wallet"
+                          className={cn({
+                            "text-[13px] text-text-tertiary": !field.value,
+                            "text-[16px]": field.value,
+                          })}
+                        >
+                          Other Wallet
+                        </label>
+                      </div>
+                      {/* </Tooltip> */}
+                    </div>
+                  </>
+                )}
+              />
             </div>
 
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
@@ -216,7 +268,7 @@ export const BridgeToInput = ({
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center">
                 <input
-                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled leading-[34px] text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white"
+                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled leading-[34px] text-[12px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white"
                   placeholder="0"
                   autoComplete="off"
                   disabled
