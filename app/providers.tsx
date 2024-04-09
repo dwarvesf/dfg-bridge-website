@@ -15,7 +15,6 @@ import {
 } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider, http } from "wagmi";
-import { Toaster } from "react-hot-toast";
 
 const { wallets } = getDefaultWallets();
 
@@ -36,7 +35,7 @@ export const config = getDefaultConfig({
     baseSepolia,
   ],
   transports: {
-    // [mainnet.id]: http(),
+    // [mainnet.id]: http("https://rpc.ankr.com/eth"),
     // [base.id]: http(),
     [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
     [baseSepolia.id]: http(),
@@ -50,8 +49,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
-        <Toaster />
+        <RainbowKitProvider coolMode>{children}</RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

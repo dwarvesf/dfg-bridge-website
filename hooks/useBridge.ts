@@ -1,17 +1,19 @@
+import { EthBridgeContract } from "@/services/contracts/abi/EthBridge";
+
 import { parseEther, zeroAddress } from "viem";
 import {
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import ethDfgBridgeContract from "../contract/abi/EthBridge.json";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
+
 import { Options } from "@layerzerolabs/lz-v2-utilities";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { config } from "@/app/providers";
-import { getChainId } from "wagmi/actions";
+import BridgeToast from "@/components/toast";
 import { baseSepolia, sepolia } from "viem/chains";
+import { getChainId } from "wagmi/actions";
 
 export function useBridge(
   bridgeContractAddress: `0x${string}`,
@@ -32,8 +34,7 @@ export function useBridge(
   );
 
   // base sepolia la` 40245
-  // sepolia la 40161
-
+  // sepolia la 40161t
   const gaslimit = 60000;
   const options = Options.newOptions()
     .addExecutorLzReceiveOption(gaslimit, 0)
@@ -44,7 +45,7 @@ export function useBridge(
   // eth sepolia la 40161
   let { data: gasData } = useReadContract({
     address: bridgeContractAddress as `0x${string}`,
-    abi: ethDfgBridgeContract?.abi,
+    abi: EthBridgeContract?.abi,
     functionName: "quote",
     args: [dstEid, receiver, value, BigInt(0), options, false],
   });
@@ -69,16 +70,16 @@ export function useBridge(
 
   const bridge: () => void = useCallback(async () => {
     if (isApproved) {
-      toast("Bridging...please confirm on your wallet!");
+      new BridgeToast().warning("Bridging ... please confirm on your wallet!");
 
       await writeContractAsync({
         address: bridgeContractAddress as `0x${string}`,
-        abi: ethDfgBridgeContract?.abi,
+        abi: EthBridgeContract?.abi,
         functionName: "bridgeToken",
         args: [dstEid, receiver, value, BigInt(0), options],
         value: parseEther(gasInEther.toString()),
       }).then((data: any) => {
-        toast.success("Waiting for your tx finalized!");
+        new BridgeToast().success("Waiting for your tx finalized!");
 
         setTxHash(data);
       });
@@ -98,7 +99,8 @@ export function useBridge(
 
   useEffect(() => {
     if (isBridgeTxSuccess) {
-      toast.success("Bridge successful!");
+      new BridgeToast().success("Bridge successful!");
+
       refetch();
       reset();
     }

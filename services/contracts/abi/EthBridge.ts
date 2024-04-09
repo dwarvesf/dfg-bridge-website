@@ -1,5 +1,5 @@
-{
-  "address": "0x1b94f7f043547a897057E205dcf8EeaD6dA545d5",
+export const EthBridgeContract = {
+  "address": "0xb14E0213fE1c21BA42f0B264e35edb58C9B1f151",
   "abi": [
     {
       "inputs": [
