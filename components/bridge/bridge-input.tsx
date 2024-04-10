@@ -13,8 +13,7 @@ import Image from "next/image";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 import { formatUnits } from "viem";
 import { FormFieldValues } from "./bridge-form";
-import Base from "@mochi-ui/icons/web3/base";
-import Eth from "@mochi-ui/icons/web3/eth";
+import getChainIcon from "@/utils/getChainIcon";
 
 type DataBalance = {
   decimals: number;
@@ -61,10 +60,7 @@ export const BridgeFromInput = ({
               <div className="flex justify-between items-center w-full">
                 {fromChainInfo?.name && (
                   <Typography level="h7" color="primary">
-                    <div className="flex">
-                      {fromChainInfo?.name}{" "}
-                      <Base width={22} height={22} className="ml-2" />
-                    </div>
+                    <div className="flex">{getChainIcon(fromChainInfo)}</div>
                   </Typography>
                 )}
               </div>
@@ -72,6 +68,7 @@ export const BridgeFromInput = ({
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center">
                 <input
+                  type="number"
                   className="flex-1 min-w-0 outline-none placeholder:text-text-disabled leading-[34px] text-[12px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   placeholder="0"
                   autoComplete="off"
@@ -80,6 +77,16 @@ export const BridgeFromInput = ({
                     field.onChange(e);
 
                     setValue("toAmount", e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === "e" ||
+                      e.key === "-" ||
+                      e.key === "." ||
+                      e.key === ","
+                    ) {
+                      e.preventDefault();
+                    }
                   }}
                 />
                 <Button
@@ -136,10 +143,7 @@ export const BridgeToInput = ({
               <div className="flex justify-between items-center w-full">
                 {toChainInfo?.name && (
                   <Typography level="h7" color="primary">
-                    <div className="flex">
-                      {toChainInfo?.name}{" "}
-                      <Eth width={22} height={22} className="ml-2" />
-                    </div>
+                    <div className="flex">{getChainIcon(toChainInfo)}</div>
                   </Typography>
                 )}
 
@@ -227,6 +231,16 @@ export const BridgeToInput = ({
                   autoComplete="off"
                   disabled
                   {...field}
+                  onKeyDown={(e) => {
+                    if (
+                      e.key === "e" ||
+                      e.key === "-" ||
+                      e.key === "." ||
+                      e.key === ","
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 <Button
                   cursor="none"
