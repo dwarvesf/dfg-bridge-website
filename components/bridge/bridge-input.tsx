@@ -1,19 +1,23 @@
 "use client";
 
-import { cn, formatNum } from "@/utils/number";
+import getChainIcon from "@/utils/getChainIcon";
+import { formatNum } from "@/utils/number";
 import {
   Button,
   FormControl,
   FormErrorMessage,
-  Switch,
   Typography,
 } from "@mochi-ui/core";
 import { Chain } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
-import { Control, Controller, UseFormSetValue } from "react-hook-form";
-import { formatUnits } from "viem";
+import {
+  Control,
+  Controller,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
+import { formatUnits, isAddress } from "viem";
 import { FormFieldValues } from "./bridge-form";
-import getChainIcon from "@/utils/getChainIcon";
 
 type DataBalance = {
   decimals: number;
@@ -29,6 +33,7 @@ interface BridgeInputProps {
   data?: DataBalance | undefined;
   setValue: UseFormSetValue<FormFieldValues>;
   watchFields?: (string | boolean | undefined)[];
+  register?: UseFormRegister<FormFieldValues>;
 }
 
 export const BridgeFromInput = ({
@@ -36,6 +41,7 @@ export const BridgeFromInput = ({
   control,
   data,
   setValue,
+  register,
 }: BridgeInputProps) => {
   const formatted = formatUnits(data?.value ?? BigInt(0), data?.decimals ?? 0);
 
@@ -47,16 +53,29 @@ export const BridgeFromInput = ({
   return (
     <div className="rounded-xl bg-background-level2 p-3 space-y-3">
       <Controller
-        name="fromAmount"
         control={control}
         rules={{
           required: "This field is required",
-          max: "This field is required",
+          max: 10 || "This field is required",
         }}
+        {...register("fromAmount", {
+          required: {
+            value: true,
+            message: "This field is required",
+          },
+          max: {
+            value: 100,
+            message: `This should be lower than 10`,
+          },
+          min: {
+            value: 10,
+            message: "This should be greater than 0",
+          },
+        })}
         render={({ field, fieldState }) => (
           <FormControl error={!!fieldState.error} hideHelperTextOnError>
             <div className="min-h-[34px]">
-              <div className="text-sm text-text-tertiary">You bridge from </div>
+              <div className="text-sm text-text-tertiary">From </div>
               <div className="flex justify-between items-center w-full">
                 {fromChainInfo?.name && (
                   <Typography level="h7" color="primary">
@@ -130,12 +149,19 @@ export const BridgeToInput = ({
   data,
   setValue,
   watchFields,
+  register,
 }: BridgeInputProps) => {
   return (
     <div className="rounded-xl bg-background-level2 p-3 space-y-3">
       <Controller
-        name="toAddress"
         control={control}
+        {...register("toAddress", {
+          required: {
+            value: true,
+            message: "This field is required",
+          },
+          validate: (value) => isAddress(value) || "Invalid address format",
+        })}
         render={({ field, fieldState }) => (
           <FormControl error={!!fieldState.error} hideHelperTextOnError>
             <div className="min-h-[34px]">
@@ -146,70 +172,16 @@ export const BridgeToInput = ({
                     <div className="flex">{getChainIcon(toChainInfo)}</div>
                   </Typography>
                 )}
-
-                <Controller
-                  name="hasOther"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <div className="items-center hidden md:flex">
-                        {/* <Tooltip
-                          content="Bridge to other wallet address"
-                          className="max-w-xs text-center z-50"
-                          arrow="top-center"
-                        > */}
-                        <div className="flex items-center space-x-2">
-                          <label
-                            htmlFor="switch-other-wallet"
-                            className={cn({
-                              "text-[13px] text-text-tertiary": field.value,
-                              "text-[16px]": !field.value,
-                            })}
-                          >
-                            Connected Wallet
-                          </label>
-                          <Switch
-                            type="button"
-                            size="sm"
-                            id="switch-other-wallet"
-                            className="mx-2"
-                            checked={field.value}
-                            name={field.name}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setValue("hasOther", !field.value);
-                              if (field.value) {
-                                //@ts-ignore
-                                setValue("toAddress", watchFields?.[1]);
-                              }
-                            }}
-                          />
-                          <label
-                            htmlFor="switch-other-wallet"
-                            className={cn({
-                              "text-[13px] text-text-tertiary": !field.value,
-                              "text-[16px]": field.value,
-                            })}
-                          >
-                            Other Wallet
-                          </label>
-                        </div>
-                        {/* </Tooltip> */}
-                      </div>
-                    </>
-                  )}
-                />
               </div>
             </div>
 
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center ">
                 <input
-                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-md text-text-black disabled:bg-white disabled:text-text-disabled"
+                  className="flex-1 min-w-0 outline-none placeholder:text-text-disabled [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-md text-text-black disabled:bg-white disabled:text-text-disabled text-[15px]"
                   autoComplete="off"
                   {...field}
-                  placeholder="0x"
-                  disabled={!watchFields?.[0]}
+                  placeholder="0x9ca..."
                 />
               </div>
             </div>
@@ -217,7 +189,6 @@ export const BridgeToInput = ({
           </FormControl>
         )}
       />
-
       <Controller
         name="toAmount"
         control={control}

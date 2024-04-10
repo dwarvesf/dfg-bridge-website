@@ -4,7 +4,7 @@ import { config } from "@/app/providers";
 import { useApprove } from "@/hooks/useApprove";
 import { useBridge } from "@/hooks/useBridge";
 import { convertNumberToBigInt } from "@/utils/number";
-import { Button, IconButton, Tooltip, Typography } from "@mochi-ui/core";
+import { Button, IconButton, Typography } from "@mochi-ui/core";
 import { ArrowUpDownLine, Spinner } from "@mochi-ui/icons";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useEffect, useMemo } from "react";
@@ -60,7 +60,7 @@ export default function BridgeForm() {
 
   const { chains, switchChain } = useSwitchChain();
 
-  const { control, setValue, reset, getValues, watch, handleSubmit } =
+  const { control, setValue, reset, getValues, watch, handleSubmit, register } =
     useForm<FormFieldValues>();
 
   const watchFields = watch([
@@ -162,7 +162,9 @@ export default function BridgeForm() {
 
         <div className="flex flex-col">
           <div className="py-3 space-y-3">
-            <BridgeFromInput {...{ control, fromChainInfo, data, setValue }} />
+            <BridgeFromInput
+              {...{ control, fromChainInfo, data, setValue, register }}
+            />
 
             <div className="w-full flex justify-center items-center my-3">
               <IconButton
@@ -193,7 +195,14 @@ export default function BridgeForm() {
             </div>
 
             <BridgeToInput
-              {...{ control, toChainInfo, data, setValue, watchFields }}
+              {...{
+                control,
+                toChainInfo,
+                data,
+                setValue,
+                watchFields,
+                register,
+              }}
             />
           </div>
 

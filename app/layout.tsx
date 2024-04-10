@@ -6,12 +6,12 @@ import { cn } from "@/utils/number";
 import { Toaster, TopBar } from "@mochi-ui/core";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-import { IBM_Plex_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const ibmPlexSans = IBM_Plex_Sans({ subsets: ["vietnamese"], weight: "500" });
+const inter = Inter({ subsets: ["vietnamese"], weight: "500" });
 
 export default function RootLayout({
   children,
@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={cn(ibmPlexSans.className, "h-full")}>
+      <body className={cn(inter.className, "h-full")}>
         <Providers>
           <Suspense>
             <main>
@@ -34,7 +34,6 @@ export default function RootLayout({
               />
               <div className="overflow-y-auto h-[calc(100vh-56px)]">
                 {children}
-                <Footer />
               </div>
             </main>
           </Suspense>
