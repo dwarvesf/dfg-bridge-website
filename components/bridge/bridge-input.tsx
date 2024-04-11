@@ -53,21 +53,19 @@ export const BridgeFromInput = ({
     <div className="rounded-xl bg-background-level2 p-3 space-y-3">
       <Controller
         control={control}
-        rules={{
-          required: "This field is required",
-          max: 10 || "This field is required",
-        }}
         {...register("fromAmount", {
           required: {
             value: true,
-            message: "This field is required",
+            message: "This field is required r",
           },
           max: {
-            value: 100,
-            message: `This should be lower than 10`,
+            value: formatNum(formatted).replaceAll(",", ""),
+            message: `This should be lower than ${formatNum(
+              formatted
+            ).replaceAll(",", "")} ${data?.symbol}`,
           },
           min: {
-            value: 10,
+            value: 1,
             message: "This should be greater than 0",
           },
         })}
