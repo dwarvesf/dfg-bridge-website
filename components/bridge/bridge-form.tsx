@@ -6,7 +6,6 @@ import { useBridge } from "@/hooks/useBridge";
 import { convertNumberToBigInt } from "@/utils/number";
 import { Button, IconButton, Typography } from "@mochi-ui/core";
 import { ArrowUpDownLine, Spinner } from "@mochi-ui/icons";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { formatUnits } from "viem";
@@ -16,6 +15,7 @@ import { getChainId } from "wagmi/actions";
 import { isDirty } from "zod";
 import BridgeToast from "../toast";
 import { BridgeFromInput, BridgeToInput } from "./bridge-input";
+import { ConnectKitButton } from "connectkit";
 
 export type FormFieldValues = {
   fromChain: number;
@@ -208,7 +208,7 @@ export default function BridgeForm() {
 
           <div className="mt-4 w-full flex justify-center">
             {!address ? (
-              <ConnectButton />
+              <ConnectKitButton />
             ) : isApproved ? (
               <div className="flex flex-col w-full">
                 <Button

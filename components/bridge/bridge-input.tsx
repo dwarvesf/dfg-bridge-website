@@ -8,7 +8,6 @@ import {
   FormErrorMessage,
   Typography,
 } from "@mochi-ui/core";
-import { Chain } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import {
   Control,
@@ -16,7 +15,7 @@ import {
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
-import { formatUnits, isAddress } from "viem";
+import { Chain, formatUnits, isAddress } from "viem";
 import { FormFieldValues } from "./bridge-form";
 
 type DataBalance = {
@@ -33,7 +32,7 @@ interface BridgeInputProps {
   data?: DataBalance | undefined;
   setValue: UseFormSetValue<FormFieldValues>;
   watchFields?: (string | boolean | undefined)[];
-  register?: UseFormRegister<FormFieldValues>;
+  register: UseFormRegister<FormFieldValues>;
 }
 
 export const BridgeFromInput = ({

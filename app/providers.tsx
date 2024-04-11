@@ -1,47 +1,39 @@
 "use client";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import * as React from "react";
+import { WagmiProvider, createConfig, http } from "wagmi";
 import {
-  RainbowKitProvider,
-  getDefaultWallets,
-  getDefaultConfig,
-} from "@rainbow-me/rainbowkit";
-import { trustWallet, ledgerWallet } from "@rainbow-me/rainbowkit/wallets";
-import {
+  baseSepolia,
   // mainnet,
   // base,
   sepolia,
-  baseSepolia,
 } from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider, http } from "wagmi";
 
-const { wallets } = getDefaultWallets();
+// const { wallets } = getDefaultWallets();
 
-export const config = getDefaultConfig({
-  appName: "DFG Bridge",
-  projectId: "cf892c23188fc5556445ad4236a9aad6",
-  wallets: [
-    ...wallets,
-    {
-      groupName: "Other",
-      wallets: [trustWallet, ledgerWallet],
+export const config = createConfig(
+  getDefaultConfig({
+    chains: [
+      // mainnet,
+      // base,
+      sepolia,
+      baseSepolia,
+    ],
+    transports: {
+      // [mainnet.id]: http("https://rpc.ankr.com/eth"),
+      // [base.id]: http(),
+      [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
+      [baseSepolia.id]: http(),
     },
-  ],
-  chains: [
-    // mainnet,
-    // base,
-    sepolia,
-    baseSepolia,
-  ],
-  transports: {
-    // [mainnet.id]: http("https://rpc.ankr.com/eth"),
-    // [base.id]: http(),
-    [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
-    [baseSepolia.id]: http(),
-  },
-  ssr: true,
-});
+    walletConnectProjectId: "cf892c23188fc5556445ad4236a9aad6",
+    appName: "DFG Bridge",
+    appDescription: "Bridge DFG from ETH to Base to stake DFG ",
+    appUrl: "https://icy.so",
+    appIcon: "https://icy.so/ICY.png",
+  })
+);
 
 const queryClient = new QueryClient();
 
@@ -49,7 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider coolMode>{children}</RainbowKitProvider>
+        <ConnectKitProvider theme="soft">{children}</ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -1,11 +1,9 @@
 "use client";
 
-import { Footer } from "@/components/footer";
 import { Logo } from "@/components/logo";
 import { cn } from "@/utils/number";
 import { Toaster, TopBar } from "@mochi-ui/core";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
+import { ConnectKitButton } from "connectkit";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
@@ -28,7 +26,7 @@ export default function RootLayout({
                 leftSlot={<Logo />}
                 rightSlot={
                   <div className="mx-1">
-                    <ConnectButton />
+                    <ConnectKitButton />
                   </div>
                 }
               />
