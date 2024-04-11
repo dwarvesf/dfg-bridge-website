@@ -79,7 +79,7 @@ export const BridgeFromInput = ({
             </div>
             <div className="rounded-lg bg-background-surface p-3 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-3/5">
+                <div className="w-2/5 md:w-3/5">
                   <div className="text-[12px] text-text-tertiary ml-3">
                     Token
                   </div>
@@ -106,7 +106,7 @@ export const BridgeFromInput = ({
                           </div>
                         </div>
                       </SelectTrigger>
-                      <SelectContent className="min-w-[200px]">
+                      <SelectContent>
                         {supportedToken?.map((token) => (
                           <SelectItem
                             key={token.symbol}
@@ -121,7 +121,7 @@ export const BridgeFromInput = ({
                     </Select>
                   </div>
                 </div>
-                <div className="w-2/5">
+                <div className="w-3/5 md:w-2/5">
                   <div className="text-[12px] text-text-tertiary ml-3">
                     Network
                   </div>
@@ -214,7 +214,7 @@ export const BridgeToInput = ({
                 </div>
                 <div className="rounded-lg bg-background-surface p-3 space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className="w-3/5">
+                    <div className="w-2/5 md:w-3/5">
                       <div className="text-[12px] text-text-tertiary ml-3">
                         Token
                       </div>
@@ -241,7 +241,7 @@ export const BridgeToInput = ({
                               </div>
                             </div>
                           </SelectTrigger>
-                          <SelectContent className="min-w-[200px]">
+                          <SelectContent>
                             {supportedToken?.map((token) => (
                               <SelectItem
                                 key={token.symbol}
@@ -256,7 +256,7 @@ export const BridgeToInput = ({
                         </Select>
                       </div>
                     </div>
-                    <div className="w-2/5">
+                    <div className="w-3/5 md:w-2/5">
                       <div className="text-[12px] text-text-tertiary ml-3">
                         Network
                       </div>
@@ -302,8 +302,6 @@ export const BridgeToInput = ({
                     </div>
                   </div>
                 </div>
-
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
               </FormControl>
             </>
           )}
@@ -316,7 +314,7 @@ export const BridgeToInput = ({
         {...register("fromAmount", {
           required: {
             value: true,
-            message: "This field is required r",
+            message: "This field is required",
           },
           max: {
             value: formatNum(formatted).replaceAll(",", ""),
@@ -347,7 +345,7 @@ export const BridgeToInput = ({
               <div className="rounded-lg bg-background-surface p-3 space-y-4">
                 <div className="flex items-center">
                   <input
-                    className="flex-1 min-w-0 outline-none placeholder:text-text-disabled text-[12px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white leading-relaxed"
+                    className="flex-1 min-w-0 outline-none placeholder:text-text-disabled text-[16px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white leading-relaxed"
                     placeholder="0"
                     autoComplete="off"
                     {...field}
