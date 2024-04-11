@@ -6,16 +6,15 @@ import { useBridge } from "@/hooks/useBridge";
 import { convertNumberToBigInt } from "@/utils/number";
 import { Button, IconButton, Typography } from "@mochi-ui/core";
 import { ArrowUpDownLine, Spinner } from "@mochi-ui/icons";
+import { ConnectKitButton } from "connectkit";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { formatUnits } from "viem";
 import { baseSepolia, sepolia } from "viem/chains";
 import { useAccount, useBalance, useSwitchChain } from "wagmi";
 import { getChainId } from "wagmi/actions";
 import { isDirty } from "zod";
 import BridgeToast from "../toast";
 import { BridgeFromInput, BridgeToInput } from "./bridge-input";
-import { ConnectKitButton } from "connectkit";
 
 export type FormFieldValues = {
   fromChain: number;
@@ -55,8 +54,6 @@ export default function BridgeForm() {
     token: tokenDFG as `0x${string}`,
     address,
   });
-
-  const formatted = formatUnits(data?.value ?? BigInt(0), data?.decimals ?? 0);
 
   const { chains, switchChain } = useSwitchChain();
 
@@ -184,13 +181,7 @@ export default function BridgeForm() {
                 id="switch-other-chain"
                 name="switch-other-chain"
               >
-                {/* <Tooltip
-                  content="Switch chain"
-                  className="max-w-xs text-center z-50"
-                  arrow="top-center"
-                > */}
                 <ArrowUpDownLine height={20} width={20} />
-                {/* </Tooltip> */}
               </IconButton>
             </div>
 
