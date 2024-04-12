@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 /* override css for connect wallet button */
-[data-rk] .ju367vn {
-    border-radius: 0.5rem;
+#connect-button>div,
+#connect-button>div>button,
+#connect-button>div>button>div,
+#connect-button>div>button>div>div>div {
+    width: 100% !important;
+    justify-content: center;
 }

@@ -4,7 +4,7 @@ import { config } from "@/app/providers";
 import { useApprove } from "@/hooks/useApprove";
 import { useBridge } from "@/hooks/useBridge";
 import { convertNumberToBigInt } from "@/utils/number";
-import { Button, IconButton, Typography } from "@mochi-ui/core";
+import { Button, IconButton } from "@mochi-ui/core";
 import { ArrowUpDownLine, Spinner } from "@mochi-ui/icons";
 import { ConnectKitButton } from "connectkit";
 import { useEffect, useMemo } from "react";
@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { baseSepolia, sepolia } from "viem/chains";
 import { useAccount, useBalance, useSwitchChain } from "wagmi";
 import { getChainId } from "wagmi/actions";
-import { isDirty } from "zod";
 import BridgeToast from "../toast";
 import { BridgeFromInput, BridgeToInput } from "./bridge-input";
 
@@ -57,8 +56,16 @@ export default function BridgeForm() {
 
   const { chains, switchChain } = useSwitchChain();
 
-  const { control, setValue, reset, getValues, watch, handleSubmit, register } =
-    useForm<FormFieldValues>();
+  const {
+    control,
+    setValue,
+    reset,
+    getValues,
+    watch,
+    handleSubmit,
+    register,
+    formState: { isDirty, isValid },
+  } = useForm<FormFieldValues>();
 
   const watchFields = watch([
     "hasOther",
@@ -149,10 +156,6 @@ export default function BridgeForm() {
         className="space-y-3 max-w-lg"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Typography level="h5" fontWeight="lg" className="text-center">
-          Bridge DFG
-        </Typography>
-
         <div className="flex flex-col">
           <div className="pb-3 space-y-3">
             <BridgeFromInput
@@ -193,7 +196,7 @@ export default function BridgeForm() {
             />
           </div>
 
-          <div className="w-full flex justify-center">
+          <div id="connect-button" className="w-full flex justify-center">
             {!address ? (
               <ConnectKitButton />
             ) : isApproved ? (
@@ -202,7 +205,7 @@ export default function BridgeForm() {
                   className="w-full"
                   size="lg"
                   type="submit"
-                  disabled={!isDirty}
+                  disabled={!isValid}
                   loading={loading}
                   loadingIndicator={<Spinner height="24px" color="#36d7b7" />}
                 >
@@ -228,7 +231,7 @@ export default function BridgeForm() {
                 className="w-full"
                 size="lg"
                 type="submit"
-                disabled={!isDirty}
+                disabled={!isValid}
                 loading={loading}
                 loadingIndicator={<Spinner height="24px" color="#36d7b7" />}
               >

@@ -6,12 +6,10 @@ import { formatNum } from "@/utils/number";
 import {
   Button,
   FormControl,
-  FormErrorMessage,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  Typography,
 } from "@mochi-ui/core";
 import Image from "next/image";
 import {
@@ -306,102 +304,88 @@ export const BridgeToInput = ({
             </>
           )}
         />
-      </div>
-      {/* TO - SECTION END*/}
-
-      {/* TOTAL AMOUNT - SECTION  */}
-      <Controller
-        {...register("fromAmount", {
-          required: {
-            value: true,
-            message: "This field is required",
-          },
-          max: {
-            value: formatNum(formatted).replaceAll(",", ""),
-            message: `This should be lower than ${formatNum(
-              formatted
-            ).replaceAll(",", "")} ${data?.symbol}`,
-          },
-          min: {
-            value: 1,
-            message: "This should be greater than 0",
-          },
-        })}
-        control={control}
-        render={({ field, fieldState }) => (
-          <FormControl error={!!fieldState.error} hideHelperTextOnError>
-            <div className="rounded-xl bg-background-level2 p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="text-[12px] text-text-tertiary ml-1">
-                  Total Amount
+        {/* TO - SECTION END*/}
+        {/* TOTAL AMOUNT - SECTION  */}
+        <Controller
+          {...register("fromAmount", {
+            required: {
+              value: true,
+              message: "This field is required",
+            },
+            max: {
+              value: formatNum(formatted).replaceAll(",", ""),
+              message: `This should be lower than ${formatNum(
+                formatted
+              ).replaceAll(",", "")} ${data?.symbol}`,
+            },
+            min: {
+              value: 1,
+              message: "This should be greater than 0",
+            },
+          })}
+          control={control}
+          render={({ field, fieldState }) => (
+            <FormControl error={!!fieldState.error} hideHelperTextOnError>
+              <div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-text-tertiary ml-1">
+                    Total Amount
+                  </div>
+                  <div className="text-sm text-text-tertiary ml-1">
+                    Balance:{" "}
+                    <button type="button" onClick={() => onMaxAmount()}>
+                      {formatNum(formatted)} {data?.symbol}
+                    </button>
+                  </div>
                 </div>
-                <div className="text-[12px] text-text-tertiary ml-1">
-                  Balance:{" "}
-                  <button type="button" onClick={() => onMaxAmount()}>
-                    {formatNum(formatted)} {data?.symbol}
-                  </button>
-                </div>
-              </div>
-              <div className="rounded-lg bg-background-surface p-3 space-y-4">
-                <div className="flex items-center">
-                  <input
-                    className="flex-1 min-w-0 outline-none placeholder:text-text-disabled text-[16px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white leading-relaxed"
-                    placeholder="0"
-                    autoComplete="off"
-                    {...field}
-                    onKeyDown={(e) => {
-                      if (
-                        e.key === "e" ||
-                        e.key === "-" ||
-                        e.key === "." ||
-                        e.key === ","
-                      ) {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                  <Button
-                    cursor="none"
-                    variant="outline"
-                    size="sm"
-                    type="button"
-                    className="bg-primary-soft pl-2 pr-2 text-text-primary !h-9 !rounded-lg cursor-default"
-                  >
-                    <Image src="/DFG.png" alt="" width={22} height={22} />{" "}
-                    {data?.symbol}
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between !mt-0">
-                  <Typography className="!text-[13px] text-text-tertiary">
-                    ≈ $
-                    {field?.value
-                      ? (parseFloat(field?.value) * 1.5).toFixed(2)
-                      : 0}
-                  </Typography>
+                <div className="mt-2 rounded-lg bg-background-surface p-3 space-y-4">
+                  <div className="flex items-center">
+                    <input
+                      className="flex-1 min-w-0 outline-none placeholder:text-text-disabled text-[16px] md:text-[32px] font-semibold text-text-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:bg-white leading-relaxed"
+                      placeholder="0"
+                      autoComplete="off"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === "e" ||
+                          e.key === "-" ||
+                          e.key === "." ||
+                          e.key === ","
+                        ) {
+                          e.preventDefault();
+                        }
+                      }}
+                      type="number"
+                    />
+                    <Button
+                      cursor="none"
+                      variant="outline"
+                      size="sm"
+                      type="button"
+                      className="bg-primary-soft pl-2 pr-2 text-text-primary !h-9 !rounded-lg cursor-default"
+                    >
+                      <Image src="/DFG.png" alt="" width={22} height={22} />{" "}
+                      {data?.symbol}
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
-            </div>
-          </FormControl>
-        )}
-      />
-      {/* TOTAL AMOUNT - SECTION END*/}
-
-      {/* TO ADDRESS - SECTION */}
-      <Controller
-        control={control}
-        {...register("toAddress", {
-          required: {
-            value: true,
-            message: "This field is required",
-          },
-          validate: (value) => isAddress(value) || "Invalid address format",
-        })}
-        render={({ field, fieldState }) => (
-          <>
-            {" "}
-            <div className="rounded-xl bg-background-level2 p-3 space-y-3">
+            </FormControl>
+          )}
+        />
+        {/* TOTAL AMOUNT - SECTION END*/}
+        {/* TO ADDRESS - SECTION */}
+        <Controller
+          control={control}
+          {...register("toAddress", {
+            required: {
+              value: true,
+              message: "This field is required",
+            },
+            validate: (value) => isAddress(value) || "Invalid address format",
+          })}
+          render={({ field, fieldState }) => (
+            <div>
               <FormControl error={!!fieldState.error} hideHelperTextOnError>
                 <div>
                   <div className="text-sm text-text-tertiary">To address </div>
@@ -417,13 +401,12 @@ export const BridgeToInput = ({
                     />
                   </div>
                 </div>
-                <FormErrorMessage>{fieldState.error?.message}</FormErrorMessage>
               </FormControl>
             </div>
-          </>
-        )}
-      />
-      {/* TO ADDRESS - SECTION END*/}
+          )}
+        />
+        {/* TO ADDRESS - SECTION END*/}{" "}
+      </div>
     </>
   );
 };
