@@ -149,7 +149,7 @@ export const BridgeFromInput = ({
                             {fromChainInfo && getChainIcon(fromChainInfo)}
                           </div>
 
-                          <div className="flex items-center text-base">
+                          <div className="flex ml-2 items-center text-base">
                             {fromChainInfo?.name}
                           </div>
                         </div>
@@ -280,7 +280,7 @@ export const BridgeToInput = ({
                                 {toChainInfo && getChainIcon(toChainInfo)}
                               </div>
 
-                              <div className="flex items-center text-base">
+                              <div className="ml-2 flex items-center text-base">
                                 {toChainInfo?.name}
                               </div>
                             </div>
