@@ -143,22 +143,18 @@ export default function BridgeForm() {
   };
 
   return (
-    <form
-      autoComplete="off"
-      className="space-y-6 max-w-lg"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="rounded-2xl relative bg-background-surface flex flex-col border border-[#23242614] p-6 w-full max-w-[530px] overflow-clip mx-auto shadow-xl">
+    <div className="rounded-2xl relative bg-background-surface flex flex-col border border-[#23242614] p-6 w-full max-w-[530px] overflow-clip mx-auto shadow-xl">
+      <form
+        autoComplete="off"
+        className="space-y-3 max-w-lg"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Typography level="h5" fontWeight="lg" className="text-center">
           Bridge DFG
         </Typography>
 
-        <p className="text-xs text-text-tertiary text-center my-1">
-          Bridge at anytime, bridge to anywhere
-        </p>
-
         <div className="flex flex-col">
-          <div className="py-3 space-y-3">
+          <div className="pb-3 space-y-3">
             <BridgeFromInput
               {...{ control, fromChainInfo, data, setValue, register }}
             />
@@ -197,7 +193,7 @@ export default function BridgeForm() {
             />
           </div>
 
-          <div className="mt-4 w-full flex justify-center">
+          <div className="w-full flex justify-center">
             {!address ? (
               <ConnectKitButton />
             ) : isApproved ? (
@@ -214,11 +210,11 @@ export default function BridgeForm() {
                 </Button>
 
                 {hash && (
-                  <div className="mt-3 w-full flex items-end">
-                    <p className="mr-2">Your latest tx:</p>
+                  <div className="mt-1 w-full flex items-end">
+                    <p className="">Your latest tx:</p>
                     <a
                       href={`${fromChainInfo?.blockExplorers?.default?.url}/tx/${hash}`}
-                      className="mt-4 group rounded-lg border border-transparent transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                      className="group rounded-lg border border-transparent transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -241,7 +237,7 @@ export default function BridgeForm() {
             )}
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

@@ -330,17 +330,17 @@ export const BridgeToInput = ({
         control={control}
         render={({ field, fieldState }) => (
           <FormControl error={!!fieldState.error} hideHelperTextOnError>
-            <div className="rounded-xl bg-background-level2 p-3 space-y-3">
+            <div className="rounded-xl bg-background-level2 p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <Typography className="!text-[13px] text-text-tertiary">
+                <div className="text-[12px] text-text-tertiary ml-1">
                   Total Amount
-                </Typography>
-                <Typography className="!text-[13px] text-text-tertiary">
+                </div>
+                <div className="text-[12px] text-text-tertiary ml-1">
                   Balance:{" "}
                   <button type="button" onClick={() => onMaxAmount()}>
                     {formatNum(formatted)} {data?.symbol}
                   </button>
-                </Typography>
+                </div>
               </div>
               <div className="rounded-lg bg-background-surface p-3 space-y-4">
                 <div className="flex items-center">
