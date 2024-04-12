@@ -328,10 +328,10 @@ export const BridgeToInput = ({
             <FormControl error={!!fieldState.error} hideHelperTextOnError>
               <div>
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-text-tertiary ml-1">
+                  <div className="text-sm text-text-tertiary">
                     Total Amount
                   </div>
-                  <div className="text-sm text-text-tertiary ml-1">
+                  <div className="text-sm text-text-tertiary">
                     Balance:{" "}
                     <button type="button" onClick={() => onMaxAmount()}>
                       {formatNum(formatted)} {data?.symbol}
