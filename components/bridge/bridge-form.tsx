@@ -1,6 +1,14 @@
 "use client";
 
 import { config } from "@/app/providers";
+import {
+  BASE_BRIDGE_CA,
+  BASE_DFG_ADDRESS,
+  BASE_DFG_DECIMALS,
+  ETH_BRIDGE_CA,
+  ETH_DFG_ADDRESS,
+  ETH_DFG_DECIMALS,
+} from "@/envs";
 import { useApprove } from "@/hooks/useApprove";
 import { useBridge } from "@/hooks/useBridge";
 import { convertNumberToBigInt } from "@/utils/number";
@@ -33,18 +41,18 @@ export default function BridgeForm() {
   const tokenDFG = useMemo(
     () =>
       currentChainId === baseSepolia.id
-        ? "0x78a3f816a8e26af8c09F6Da3995Ee19bd69bf7fF"
+        ? BASE_DFG_ADDRESS
         : currentChainId === sepolia.id
-        ? "0xf289e3b222dd42b185b7e335fa3c5bd6d132441d"
+        ? ETH_DFG_ADDRESS
         : "0x",
     [currentChainId]
   );
   const bridgeContractAddress = useMemo(
     () =>
       currentChainId === baseSepolia.id
-        ? "0x1b94f7f043547a897057E205dcf8EeaD6dA545d5"
+        ? BASE_BRIDGE_CA
         : currentChainId === sepolia.id
-        ? "0xb14E0213fE1c21BA42f0B264e35edb58C9B1f151"
+        ? ETH_BRIDGE_CA
         : "0x",
     [currentChainId]
   );
@@ -105,7 +113,9 @@ export default function BridgeForm() {
 
   const bridgeAmount = convertNumberToBigInt(
     Number(watchFields[3] ?? 0),
-    currentChainId === baseSepolia.id ? 18 : 0
+    currentChainId === baseSepolia.id
+      ? Number(BASE_DFG_DECIMALS)
+      : Number(ETH_DFG_DECIMALS)
   );
 
   const receiver = useMemo(
@@ -113,14 +123,13 @@ export default function BridgeForm() {
     [getValues, watchFields]
   );
 
-  const { bridge, isBridging, confirmingBridge, isBridgeTxSuccess, hash } =
-    useBridge(
-      bridgeContractAddress,
-      receiver as `0x${string}`,
-      bridgeAmount,
-      isApproved,
-      refetch
-    );
+  const { bridge, isBridging, confirmingBridge, hash } = useBridge(
+    bridgeContractAddress,
+    receiver as `0x${string}`,
+    bridgeAmount,
+    isApproved,
+    refetch
+  );
 
   const loading =
     confirmingApprove || isApproving || isBridging || confirmingBridge;

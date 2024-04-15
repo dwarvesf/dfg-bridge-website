@@ -8,6 +8,7 @@ import { Inter } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["vietnamese"], weight: "500" });
 
@@ -18,6 +19,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
+      <Head>
+        <title>🧊 $DFG</title>
+        <meta name="title" content="🧊 $DFG" />
+        <meta
+          name="description"
+          content="The Dwarves Community Token, use $DFG to claim $USDC, exclusive merch & more benefits later on."
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dfg.d.foundation" />
+        <meta property="og:title" content="🧊 $DFG" />
+        <meta
+          property="og:description"
+          content="The Dwarves Community Token, use $DFG to claim $USDC, exclusive merch & more benefits later on."
+        />
+        <meta property="og:image" content="/banner.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://dfg.d.foundation" />
+        <meta property="twitter:title" content="🧊 $DFG" />
+        <meta
+          property="twitter:description"
+          content="The Dwarves Community Token, use $DFG to claim $USDC, exclusive merch & more benefits later on."
+        />
+        <meta property="twitter:image" content="/banner.png" />
+      </Head>
       <body className={cn(inter.className, "h-full")}>
         <Providers>
           <Suspense>

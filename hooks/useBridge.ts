@@ -1,5 +1,3 @@
-import { EthBridgeContract } from "@/services/contracts/abi/EthBridge";
-
 import { parseEther, zeroAddress } from "viem";
 import {
   useReadContract,
@@ -12,6 +10,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { config } from "@/app/providers";
 import BridgeToast from "@/components/toast";
+import { ethBridgeAbi } from "@/contracts/bridge/eth";
+import { BASE_ENDPOINT_ID, ETH_ENDPOINT_ID } from "@/envs";
 import { baseSepolia, sepolia } from "viem/chains";
 import { getChainId } from "wagmi/actions";
 
@@ -26,26 +26,22 @@ export function useBridge(
   const dstEid = useMemo(
     () =>
       currentChainId === baseSepolia.id
-        ? 40161
+        ? Number(ETH_ENDPOINT_ID)
         : currentChainId === sepolia.id
-        ? 40245
+        ? Number(BASE_ENDPOINT_ID)
         : 0,
     [currentChainId]
   );
 
-  // base sepolia la` 40245
-  // sepolia la 40161t
   const gaslimit = 60000;
   const options = Options.newOptions()
     .addExecutorLzReceiveOption(gaslimit, 0)
     .toHex()
     .toString();
 
-  // base sepolia la` 40245
-  // eth sepolia la 40161
   let { data: gasData } = useReadContract({
     address: bridgeContractAddress as `0x${string}`,
-    abi: EthBridgeContract?.abi,
+    abi: ethBridgeAbi,
     functionName: "quote",
     args: [dstEid, receiver, value, BigInt(0), options, false],
   });
@@ -74,7 +70,7 @@ export function useBridge(
 
       await writeContractAsync({
         address: bridgeContractAddress as `0x${string}`,
-        abi: EthBridgeContract?.abi,
+        abi: ethBridgeAbi,
         functionName: "bridgeToken",
         args: [dstEid, receiver, value, BigInt(0), options],
         value: parseEther(gasInEther.toString()),
