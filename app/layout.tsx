@@ -2,7 +2,7 @@
 
 import { Logo } from "@/components/logo";
 import { cn } from "@/utils/number";
-import { Toaster, TopBar } from "@mochi-ui/core";
+import { Button, Toaster, TopBar } from "@mochi-ui/core";
 import { ConnectKitButton } from "connectkit";
 import { Inter } from "next/font/google";
 import { Suspense } from "react";
@@ -26,7 +26,17 @@ export default function RootLayout({
                 leftSlot={<Logo />}
                 rightSlot={
                   <div className="mx-1">
-                    <ConnectKitButton />
+                    <ConnectKitButton.Custom>
+                      {({ isConnected, show, truncatedAddress, ensName }) => {
+                        return (
+                          <Button onClick={show}>
+                            {isConnected
+                              ? ensName ?? truncatedAddress
+                              : "Connect Wallet"}
+                          </Button>
+                        );
+                      }}
+                    </ConnectKitButton.Custom>
                   </div>
                 }
               />

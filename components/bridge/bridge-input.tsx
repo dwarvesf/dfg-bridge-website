@@ -392,7 +392,7 @@ export const BridgeToInput = ({
                 <div className="rounded-lg bg-background-surface p-3 space-y-4">
                   <div className="flex items-center ">
                     <input
-                      className="flex-1 min-w-0 outline-none placeholder:text-text-disabled [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-md text-text-black disabled:bg-white disabled:text-text-disabled text-[15px]"
+                      className="flex-1 min-w-80 outline-none placeholder:text-text-disabled [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-md text-text-black disabled:bg-white disabled:text-text-disabled text-[14px]"
                       autoComplete="off"
                       {...field}
                       placeholder="0x9ca..."
