@@ -1,32 +1,30 @@
 "use client";
 
+import { IS_MAINNET } from "@/envs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import * as React from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
-import {
-  mainnet,
-  base,
-  // sepolia,
-  // baseSepolia,
-} from "wagmi/chains";
+import { base, baseSepolia, mainnet, sepolia } from "wagmi/chains";
 
-// const { wallets } = getDefaultWallets();
+const isMainnet = Boolean(IS_MAINNET);
 
 export const config = createConfig(
   getDefaultConfig({
-    chains: [
-      mainnet,
-      base,
-      // sepolia,
-      // baseSepolia,
-    ],
-    transports: {
-      [mainnet.id]: http("https://rpc.ankr.com/eth"),
-      [base.id]: http(),
-      // [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
-      // [baseSepolia.id]: http(),
-    },
+    chains:
+      isMainnet === false || isMainnet === undefined
+        ? [sepolia, baseSepolia]
+        : [mainnet, base],
+    transports:
+      isMainnet === false || isMainnet === undefined
+        ? {
+            [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
+            [baseSepolia.id]: http(),
+          }
+        : {
+            [mainnet.id]: http("https://rpc.ankr.com/eth"),
+            [base.id]: http(),
+          },
     walletConnectProjectId: "cf892c23188fc5556445ad4236a9aad6",
     appName: "DFG Bridge",
     appDescription: "Bridge DFG from ETH to Base to stake DFG ",
@@ -34,7 +32,6 @@ export const config = createConfig(
     appIcon: "https://dwarves.foundation/DFG.png",
   })
 );
-
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {

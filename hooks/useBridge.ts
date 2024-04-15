@@ -6,14 +6,13 @@ import {
 } from "wagmi";
 
 import { Options } from "@layerzerolabs/lz-v2-utilities";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { config } from "@/app/providers";
 import BridgeToast from "@/components/toast";
 import { ethBridgeAbi } from "@/contracts/bridge/eth";
-import { BASE_ENDPOINT_ID, ETH_ENDPOINT_ID } from "@/envs";
-import { baseSepolia, sepolia } from "viem/chains";
 import { getChainId } from "wagmi/actions";
+import useCurrentChainInfo from "./useCurrentChainInfo";
 
 export function useBridge(
   bridgeContractAddress: `0x${string}`,
@@ -23,15 +22,7 @@ export function useBridge(
   refetch: () => void
 ) {
   const currentChainId = getChainId(config);
-  const dstEid = useMemo(
-    () =>
-      currentChainId === baseSepolia.id
-        ? Number(ETH_ENDPOINT_ID)
-        : currentChainId === sepolia.id
-        ? Number(BASE_ENDPOINT_ID)
-        : 0,
-    [currentChainId]
-  );
+  const { dstEid } = useCurrentChainInfo(currentChainId);
 
   const gaslimit = 60000;
   const options = Options.newOptions()

@@ -1,24 +1,21 @@
 "use client";
 
 import { config } from "@/app/providers";
-import {
-  BASE_BRIDGE_CA,
-  BASE_DFG_ADDRESS,
-  BASE_DFG_DECIMALS,
-  ETH_BRIDGE_CA,
-  ETH_DFG_ADDRESS,
-  ETH_DFG_DECIMALS,
-} from "@/envs";
 import { useApprove } from "@/hooks/useApprove";
 import { useBridge } from "@/hooks/useBridge";
+import useCurrentChainInfo from "@/hooks/useCurrentChainInfo";
 import { convertNumberToBigInt } from "@/utils/number";
 import { Button, IconButton } from "@mochi-ui/core";
 import { ArrowUpDownLine, Spinner } from "@mochi-ui/icons";
 import { ConnectKitButton } from "connectkit";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { baseSepolia, sepolia } from "viem/chains";
-import { useAccount, useBalance, useSwitchChain } from "wagmi";
+import {
+  useAccount,
+  useAccountEffect,
+  useBalance,
+  useSwitchChain,
+} from "wagmi";
 import { getChainId } from "wagmi/actions";
 import BridgeToast from "../toast";
 import { BridgeFromInput, BridgeToInput } from "./bridge-input";
@@ -38,24 +35,12 @@ export default function BridgeForm() {
 
   const currentChainId = getChainId(config);
 
-  const tokenDFG = useMemo(
-    () =>
-      currentChainId === baseSepolia.id
-        ? BASE_DFG_ADDRESS
-        : currentChainId === sepolia.id
-        ? ETH_DFG_ADDRESS
-        : "0x",
-    [currentChainId]
-  );
-  const bridgeContractAddress = useMemo(
-    () =>
-      currentChainId === baseSepolia.id
-        ? BASE_BRIDGE_CA
-        : currentChainId === sepolia.id
-        ? ETH_BRIDGE_CA
-        : "0x",
-    [currentChainId]
-  );
+  const {
+    tokenDFG,
+    bridgeContractAddress,
+    decimalsConvertNumber,
+    defaultToChain,
+  } = useCurrentChainInfo(currentChainId);
 
   const { data, refetch } = useBalance({
     token: tokenDFG as `0x${string}`,
@@ -96,10 +81,10 @@ export default function BridgeForm() {
     defaultValues.fromAddress = address;
     defaultValues.toAddress = address;
     defaultValues.fromChain = currentChainId;
-    defaultValues.toChain = currentChainId === 11155111 ? 84532 : 11155111;
+    defaultValues.toChain = defaultToChain;
 
     reset({ ...defaultValues });
-  }, [address, currentChainId, reset]);
+  }, [address, currentChainId, defaultToChain, reset]);
 
   const { approve, isApproved, confirmingApprove, isApproving } = useApprove(
     tokenDFG,
@@ -108,14 +93,24 @@ export default function BridgeForm() {
     convertNumberToBigInt(Number(watchFields[3] ?? 0))
   );
 
-  const fromChainInfo = chains?.find((c) => c.id === getValues().fromChain);
-  const toChainInfo = chains?.find((c) => c.id === getValues().toChain);
+  const fromChainInfo = useMemo(
+    () =>
+      chains?.find((c) => {
+        return c.id === getValues().fromChain;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chains, getValues().fromChain, getValues]
+  );
+
+  const toChainInfo = useMemo(
+    () => chains?.find((c) => c.id === getValues().toChain),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chains, getValues().fromChain, getValues]
+  );
 
   const bridgeAmount = convertNumberToBigInt(
     Number(watchFields[3] ?? 0),
-    currentChainId === baseSepolia.id
-      ? Number(BASE_DFG_DECIMALS)
-      : Number(ETH_DFG_DECIMALS)
+    decimalsConvertNumber
   );
 
   const receiver = useMemo(
@@ -158,6 +153,12 @@ export default function BridgeForm() {
     }
   };
 
+  useAccountEffect({
+    onDisconnect() {
+      setValue("fromAddress", "");
+      setValue("toAddress", "");
+    },
+  });
   return (
     <div className="rounded-2xl relative bg-background-surface flex flex-col border border-[#23242614] p-6 w-full max-w-[530px] overflow-clip mx-auto shadow-xl">
       <form
