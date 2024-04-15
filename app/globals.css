@@ -9,5 +9,5 @@
 #connect-button>div>button>div>div>div {
     width: 100% !important;
     justify-content: center;
-    height: 48px;
+    min-height: 48px;
 }
