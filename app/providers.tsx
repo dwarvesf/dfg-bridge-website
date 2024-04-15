@@ -5,10 +5,10 @@ import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import * as React from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import {
-  baseSepolia,
-  // mainnet,
-  // base,
-  sepolia,
+  mainnet,
+  base,
+  // sepolia,
+  // baseSepolia,
 } from "wagmi/chains";
 
 // const { wallets } = getDefaultWallets();
@@ -16,16 +16,16 @@ import {
 export const config = createConfig(
   getDefaultConfig({
     chains: [
-      // mainnet,
-      // base,
-      sepolia,
-      baseSepolia,
+      mainnet,
+      base,
+      // sepolia,
+      // baseSepolia,
     ],
     transports: {
-      // [mainnet.id]: http("https://rpc.ankr.com/eth"),
-      // [base.id]: http(),
-      [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
-      [baseSepolia.id]: http(),
+      [mainnet.id]: http("https://rpc.ankr.com/eth"),
+      [base.id]: http(),
+      // [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
+      // [baseSepolia.id]: http(),
     },
     walletConnectProjectId: "cf892c23188fc5556445ad4236a9aad6",
     appName: "DFG Bridge",
