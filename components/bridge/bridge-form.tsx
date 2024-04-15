@@ -90,9 +90,9 @@ export default function BridgeForm() {
     tokenDFG,
     bridgeContractAddress,
     address,
-    convertNumberToBigInt(Number(watchFields[3] ?? 0))
+    convertNumberToBigInt(Number(watchFields[3] ?? 0), 0)
   );
-
+ 
   const fromChainInfo = useMemo(
     () =>
       chains?.find((c) => {

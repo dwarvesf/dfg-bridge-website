@@ -332,7 +332,7 @@ export const BridgeToInput = ({
                   <div className="text-sm text-text-tertiary">
                     Balance:{" "}
                     <button type="button" onClick={() => onMaxAmount()}>
-                      {formatNum(formatted)} {data?.symbol}
+                      {formatNum(formatted)} DFG
                     </button>
                   </div>
                 </div>

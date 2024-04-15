@@ -1,5 +1,5 @@
 import BridgeToast from "@/components/toast";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { erc20Abi, zeroAddress } from "viem";
 import {
   useReadContract,
@@ -13,7 +13,7 @@ export function useApprove(
   owner: `0x${string}` = zeroAddress,
   value: bigint
 ) {
-  const { data: allowance = BigInt(0) } = useReadContract({
+  const { data: allowance = BigInt(0), refetch } = useReadContract({
     address: token,
     abi: erc20Abi,
     functionName: "allowance",
@@ -30,10 +30,13 @@ export function useApprove(
   const { isLoading: isApproving, isSuccess } = useWaitForTransactionReceipt({
     hash: data,
   });
+  const allowanceNumber = Number(allowance.toString());
 
-  const isWithinAllowanceCap = allowance >= value;
-  const isApproved =
-    (allowance !== BigInt(0) && isWithinAllowanceCap) || isSuccess;
+  const isWithinAllowanceCap = allowanceNumber >= Number(value);
+  const isApproved = useMemo(
+    () => (allowance !== BigInt(0) && isWithinAllowanceCap) || isSuccess,
+    [allowance, isSuccess, isWithinAllowanceCap]
+  );
 
   const approve = async () => {
     new BridgeToast().warning("Approving ... please confirm on your wallet!");
@@ -51,10 +54,10 @@ export function useApprove(
   useEffect(() => {
     if (isSuccess) {
       new BridgeToast().success("Approval successful!");
-
-      // reset();
+      reset();
+      refetch();
     }
-  }, [isSuccess, reset]);
+  }, [isSuccess, refetch, reset]);
 
   return {
     approve,
