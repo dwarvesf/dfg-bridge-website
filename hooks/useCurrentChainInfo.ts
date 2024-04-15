@@ -101,7 +101,7 @@ function useCurrentChainInfo(currentChainId: number) {
     } else {
       return currentChainId === base.id
         ? Number(ETH_ENDPOINT_ID)
-        : currentChainId === sepolia.id
+        : currentChainId === mainnet.id
         ? Number(BASE_ENDPOINT_ID)
         : 0;
     }
