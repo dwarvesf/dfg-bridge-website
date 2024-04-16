@@ -9,7 +9,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const inter = Inter({ subsets: ["vietnamese"], weight: "500" });
+const inter = Inter({ subsets: ["vietnamese"], weight: ["400", "500"] });
 
 export default function RootLayout({
   children,

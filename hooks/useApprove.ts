@@ -1,4 +1,3 @@
-import BridgeToast from "@/components/toast";
 import { useEffect, useMemo } from "react";
 import { erc20Abi, zeroAddress } from "viem";
 import {
@@ -39,21 +38,16 @@ export function useApprove(
   );
 
   const approve = async () => {
-    new BridgeToast().warning("Approving ... please confirm on your wallet!");
-
     await writeContractAsync({
       address: token,
       abi: erc20Abi,
       functionName: "approve",
       args: [bridgeContractAddress, value],
-    }).then(() => {
-      new BridgeToast().success("Waiting for your tx finalized!");
     });
   };
 
   useEffect(() => {
     if (isSuccess) {
-      new BridgeToast().success("Approval successful!");
       reset();
       refetch();
     }
