@@ -27,9 +27,9 @@ export const config = createConfig(
           },
     walletConnectProjectId: "cf892c23188fc5556445ad4236a9aad6",
     appName: "DFG Bridge",
-    appDescription: "Bridge DFG from ETH to Base to stake DFG ",
-    appUrl: "https://dwarves.foundation/",
-    appIcon: "https://dwarves.foundation/DFG.png",
+    appDescription: "Bridge DFG from ETH to Base to stake DFG",
+    appUrl: "https://bridge.d.foundation/",
+    appIcon: "https://bridge.d.foundation/DFG.png",
   })
 );
 const queryClient = new QueryClient();

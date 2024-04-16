@@ -30,11 +30,13 @@ import {
   useAccount,
   useAccountEffect,
   useBalance,
+  useChains,
   useSwitchChain,
 } from "wagmi";
 import { getChainId } from "wagmi/actions";
 import BridgeToast from "../toast";
 import { BridgeFromInput, BridgeToInput } from "./bridge-input";
+import { useModal } from "connectkit";
 
 export type FormFieldValues = {
   fromChain: number;
@@ -47,13 +49,21 @@ export type FormFieldValues = {
 };
 
 export default function BridgeForm() {
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
   const debounceRef = useRef<number>();
   const [isFlowStarted, setIsFlowStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDone, setIsDone] = useState(false);
 
   const currentChainId = getChainId(config);
+  const supportedChains = useChains();
+  const { open: connectKitOpen, setOpen: setConnectKitOpen } = useModal();
+
+  useEffect(() => {
+    if (supportedChains.every((sc) => sc.id !== chain?.id) || !connectKitOpen)
+      return;
+    setConnectKitOpen(false);
+  }, [chain?.id, connectKitOpen, setConnectKitOpen, supportedChains]);
 
   const {
     tokenDFG,
