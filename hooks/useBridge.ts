@@ -9,7 +9,6 @@ import { Options } from "@layerzerolabs/lz-v2-utilities";
 import { useCallback, useEffect, useState } from "react";
 
 import { config } from "@/app/providers";
-import BridgeToast from "@/components/toast";
 import { ethBridgeAbi } from "@/contracts/bridge/eth";
 import { getChainId } from "wagmi/actions";
 import useCurrentChainInfo from "./useCurrentChainInfo";
@@ -47,18 +46,13 @@ export function useBridge(
     reset,
   } = useWriteContract();
 
-  const {
-    isLoading: isBridging,
-    isSuccess: isBridgeTxSuccess,
-    status,
-  } = useWaitForTransactionReceipt({
-    hash,
-  });
+  const { isLoading: isBridging, isSuccess: isBridgeTxSuccess } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
-  const bridge: () => void = useCallback(async () => {
+  const bridge: () => Promise<void> = useCallback(async () => {
     if (isApproved) {
-      new BridgeToast().warning("Bridging ... please confirm on your wallet!");
-
       await writeContractAsync({
         address: bridgeContractAddress as `0x${string}`,
         abi: ethBridgeAbi,
@@ -66,8 +60,6 @@ export function useBridge(
         args: [dstEid, receiver, value, BigInt(0), options],
         value: parseEther(gasInEther.toString()),
       }).then((data: any) => {
-        new BridgeToast().success("Waiting for your tx finalized!");
-
         setTxHash(data);
       });
     }
@@ -86,8 +78,6 @@ export function useBridge(
 
   useEffect(() => {
     if (isBridgeTxSuccess) {
-      new BridgeToast().success("Bridge successful!");
-
       refetch();
       reset();
     }

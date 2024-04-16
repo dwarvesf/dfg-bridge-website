@@ -9,7 +9,7 @@ export default function getChainIcon({ id }: { id: number }) {
     case 11155111:
       return (
         <div className="flex items-center text-sm">
-          <Eth width={16} height={16} className="mr-2" />
+          <Eth width={22} height={22} className="mr-2" />
         </div>
       );
 
@@ -17,14 +17,14 @@ export default function getChainIcon({ id }: { id: number }) {
     case 8453:
       return (
         <div className="flex items-center text-sm">
-          <Base width={16} height={16} className="mr-2" />
+          <Base width={22} height={22} className="mr-2" />
         </div>
       );
 
     case 1:
       return (
         <div className="flex items-center text-sm">
-          <Eth width={16} height={16} className="mr-2" />
+          <Eth width={22} height={22} className="mr-2" />
         </div>
       );
     default:
